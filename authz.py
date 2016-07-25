@@ -1,15 +1,16 @@
 from flask import Flask, jsonify, request
 app = Flask(__name__)
+application = app
 
 @app.route("/")
 def index():
     return "Docker Authz Plugin"
 
-@app.route("/Plugin.Activate")
+@app.route("/Plugin.Activate", methods=['POST'])
 def activate():
     return jsonify({'Implements': ['authz']})
 
-@app.route("/AuthzPlugin.AuthZReq")
+@app.route("/AuthzPlugin.AuthZReq", methods=['POST'])
 def authz_request():
     print("AuthZ Request")
     print(request.data)
@@ -18,7 +19,7 @@ def authz_request():
          "Err":   "The error message if things go wrong"}
     return jsonify(**r)
 
-@app.route("/AuthzPlugin.AuthZRes")
+@app.route("/AuthzPlugin.AuthZRes", methods=['POST'])
 def authz_response():
     print("AuthZ Response")
     print(request.data)
