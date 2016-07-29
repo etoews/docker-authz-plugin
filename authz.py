@@ -10,7 +10,7 @@ def index():
 def activate():
     return jsonify({'Implements': ['authz']})
 
-@app.route("/AuthzPlugin.AuthZReq", methods=['POST'])
+@app.route("/AuthZPlugin.AuthZReq", methods=['POST'])
 def authz_request():
     print("AuthZ Request")
     print(request.data)
@@ -19,7 +19,7 @@ def authz_request():
          "Err":   "The error message if things go wrong"}
     return jsonify(**r)
 
-@app.route("/AuthzPlugin.AuthZRes", methods=['POST'])
+@app.route("/AuthZPlugin.AuthZRes", methods=['POST'])
 def authz_response():
     print("AuthZ Response")
     print(request.data)
