@@ -29,34 +29,35 @@ def authz_request():
     print("AuthZ Request")
     print(request.data)
 
+    plugin_request = json.loads(request.data)
     has_said_hello = _has_said_hello()
 
     if has_said_hello:
         response = {"Allow": True,
-                    "Msg":   "The request authorization succeeded.",
-                    "Err":   "The error message if things go wrong."}
-    else:
-        encoded_request = json.loads(request.data)['RequestBody']
-        docker_request = json.loads(base64.b64decode(encoded_request))
+                    "Msg":   "The request authorization succeeded."}
+    elif 'RequestBody' in plugin_request:
+            encoded_docker_request = plugin_request['RequestBody']
+            docker_request = json.loads(base64.b64decode(encoded_docker_request))
 
-        if docker_request['Image'] == 'hello-world':
-            _set_said_hello(True)
-            response = {"Allow": True,
-                        "Msg":   "The request authorization succeeded. Thanks for saying hello!",
-                        "Err":   "The error message if things go wrong."}
-        else:
-            response = {"Allow": False,
-                        "Msg":   "The request authorization failed. You must say hello first",
-                        "Err":   "You must say hello first."}
+            if docker_request['Image'] == 'hello-world':
+                _set_said_hello(True)
+                response = {"Allow": True,
+                            "Msg":   "The request authorization succeeded. Thanks for saying hello!"}
+            else:
+                response = {"Allow": False,
+                            "Msg":   "The request authorization failed. You must say hello first",
+                            "Err":   "You must say hello first."}
+    else:
+        response = {"Allow": False,
+                    "Msg":   "The request authorization failed. You must say hello first",
+                    "Err":   "You must say hello first."}
 
     return jsonify(**response)
 
 @app.route("/AuthZPlugin.AuthZRes", methods=['POST'])
 def authz_response():
     print("AuthZ Response")
-    response = {"Allow": True,
-                "Msg":   "The response authorization succeeded.",
-                "Err":   "The error message if things go wrong."}
+    response = {"Allow": True}
     return jsonify(**response)
 
 if __name__ == "__main__":
